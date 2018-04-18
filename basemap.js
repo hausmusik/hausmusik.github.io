@@ -45,4 +45,16 @@ let myLayers = {
 
 
 myMap.addLayer(myLayers.osm); //Hinzufügen des Layers zur Karte, dabei können verschiedene Layer nach dem .irgendwas ausgewählt werden
+let myMapControl = L.control.layers({
+    "Openstreetmap" : myLayers.osm,
+    "Geolandbasemap" : myLayers.geolandbasemap,
+    "Bmapoverlay" : myLayers.bmapoverlay,
+    "Bmapgrau" : myLayers.bmapgrau,
+    "Bmaphidpi" : myLayers.bmaphidpi,
+    "Bmaporthofoto20cm" : myLayers.bmaporthofoto30cm,
+})
+myMap.addControl(myMapControl);
+
+
+
 myMap.setView([47.267,11.383], 11); //Koordinaten setzen
