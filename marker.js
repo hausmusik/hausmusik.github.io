@@ -1,6 +1,7 @@
 //Definition der Varibalen
 let myMap = L.map("mapdiv"); // http://leafletjs.com/reference-1.3.0.html#map-l-map
 //let myLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"); // s steht für den Subdomain
+let markerGroup = L.featureGroup();
 
 let myLayers = { //http://leafletjs.com/reference-1.3.0.html#tilelayer-l-tilelayer
     osm : L.tileLayer (
@@ -45,6 +46,8 @@ let myLayers = { //http://leafletjs.com/reference-1.3.0.html#tilelayer-l-tilelay
 
 
 myMap.addLayer(myLayers.osm); //Hinzufügen des Layers zur Karte, dabei können verschiedene Layer nach dem .irgendwas ausgewählt werden //http://leafletjs.com/reference-1.3.0.html#layer-onadd
+myMap.addLayer(markerGroup);
+
 let myMapControl = L.control.layers({ // http://leafletjs.com/reference-1.3.0.html#control-layers-l-control-layers
     "Openstreetmap" : myLayers.osm,
     "Geolandbasemap" : myLayers.geolandbasemap,
@@ -53,15 +56,16 @@ let myMapControl = L.control.layers({ // http://leafletjs.com/reference-1.3.0.ht
     "Bmaporthofoto20cm" : myLayers.bmaporthofoto30cm,
 }, {
     "Bmapoverlay" : myLayers.bmapoverlay,
+    "Marker": markerGroup,
 }, {
-    collapsed : false // http://leafletjs.com/reference-1.3.0.html#control-layers-collapsed
+    collapsed : true // http://leafletjs.com/reference-1.3.0.html#control-layers-collapsed
 });
 
 myMap.addControl(myMapControl); // http://leafletjs.com/reference-1.3.0.html#map-addcontrol
 
 
 
-myMap.setView([47.267,11.383], 11); //Koordinaten setzen // http://leafletjs.com/reference-1.3.0.html#map-setview
+//myMap.setView([47.267,11.383], 11); //Koordinaten setzen // http://leafletjs.com/reference-1.3.0.html#map-setview
 
 L.control.scale({ //http://leafletjs.com/reference-1.3.0.html#control-scale-l-control-scale
     position: "bottomleft", // http://leafletjs.com/reference-1.3.0.html#control-position
@@ -75,16 +79,39 @@ L.control.scale({ //http://leafletjs.com/reference-1.3.0.html#control-scale-l-co
 const uni = [47.264, 11.385]; //feste Koordinate
 const usi = [47.257, 11.356];
 const technik = [47.263, 11.343];
+const patscher =[47.208, 11.461];
+const iglis =[47.230, 11.411];
 const markerOptions = {
     title: "Universität Innsbruck", // feste Optionen für alle
-    opacity: 0.5,
-    draggable: true,
+    opacity: 1,
+    draggable: false,
+};
+const markerOptions2 = {
+    title: "Nicht Uni", // feste Optionen für alle
+    opacity: 1,
+    draggable: false,
 };
 
-L.marker(uni, markerOptions).addTo(myMap); //Marker Koordinate und Marker zur Map adden
+L.marker(uni, markerOptions).addTo(markerGroup); //Marker Koordinate und Marker zur Map adden
+L.marker(usi, markerOptions).addTo(markerGroup);
+L.marker(technik, markerOptions).addTo(markerGroup);
+L.marker(patscher, markerOptions2).addTo(markerGroup).bindPopup("<p>Patscherkofel</p><img style = 'width:200px' src='https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/12-06-05-innsbruck-by-ralfr-014.jpg/1920px-12-06-05-innsbruck-by-ralfr-014.jpg' alt='Patscherkofel' />"); // so geht es in kurz
+L.marker(iglis, markerOptions2).addTo(markerGroup);
 
-L.marker(usi, markerOptions).addTo(myMap);
 
-L.marker(technik, markerOptions).addTo(myMap);
+//let patscherKofelMarker = L.marker (patscher).addTo(markerGroup);
+//patscherKofelMarker.bindPopup("<p>Patscherkofel</p><img style = 'width:200px' src='https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/12-06-05-innsbruck-by-ralfr-014.jpg/1920px-12-06-05-innsbruck-by-ralfr-014.jpg' />"); //so geht es in lange
 
-myMap.setView(uni, 14);
+myMap.fitBounds(markerGroup.getBounds());
+
+let line = L.polyline (
+    [patscher, iglis], {
+        color: 'red',
+        weigth: 5,
+    });
+myMap.addLayer(line);
+
+let uniPolygon = L.polygon([uni, usi, technik]);
+myMap.addLayer (uniPolygon)
+
+uniPolygon.bindPopup("Ende")
