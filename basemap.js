@@ -54,7 +54,7 @@ let myMapControl = L.control.layers({ // http://leafletjs.com/reference-1.3.0.ht
 }, {
     "Bmapoverlay" : myLayers.bmapoverlay,
 }, {
-    collapsed : false
+    collapsed : false // http://leafletjs.com/reference-1.3.0.html#control-layers-collapsed
 });
 
 myMap.addControl(myMapControl); // http://leafletjs.com/reference-1.3.0.html#map-addcontrol
@@ -64,7 +64,7 @@ myMap.addControl(myMapControl); // http://leafletjs.com/reference-1.3.0.html#map
 myMap.setView([47.267,11.383], 11); //Koordinaten setzen // http://leafletjs.com/reference-1.3.0.html#map-setview
 
 L.control.scale({ //http://leafletjs.com/reference-1.3.0.html#control-scale-l-control-scale
-    position: "bottomleft",
+    position: "bottomleft", // http://leafletjs.com/reference-1.3.0.html#control-position
     maxWidth: 200, // http://leafletjs.com/reference-1.3.0.html#control-scale-maxwidth
     metric: true, // http://leafletjs.com/reference-1.3.0.html#control-scale-metric
     imperial: false, // http://leafletjs.com/reference-1.3.0.html#control-scale-imperial
