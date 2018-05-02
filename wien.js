@@ -1,7 +1,7 @@
 
+//https://mapicons.mapsmarker.com icon raussuchen
 let myMap = L.map("mapdiv");
-const awsGroup = L.featureGroup().addTo(myMap); //neue Group fuer die Map
-
+const wienGroup = L.featureGroup().addTo(myMap)
 let myLayers = {
     osm : L.tileLayer (
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -53,7 +53,7 @@ let myMapControl = L.control.layers({
     "Bmaporthofoto20cm" : myLayers.bmaporthofoto30cm,
 }, {
     "Bmapoverlay" : myLayers.bmapoverlay,
-    "Wetterstationen" : awsGroup, //Hinzufuegen zum Overlay
+    "Stationen" : wienGroup, //Hinzufuegen zum Overlay
 }, {
     collapsed : true
 });
@@ -68,13 +68,31 @@ L.control.scale({
     }
 ).addTo(myMap);
 
-let geojson = L.geoJSON (stationen).addTo(awsGroup); //Hinzufuegen der Stationen zur Map
-geojson.bindPopup(function(layer) {
-    const props = layer.feature.properties;
-    const popupText = `<h1>${props.name}</h1>
-    <p>Temperatur: ${props.LT} °C</p>`;
-    
-    return popupText;   
-
+const myIcon = L.icon({
+    iconUrl: "/icons/robbery.png"
 });
-myMap.fitBounds(awsGroup.getBounds());
+
+async function addGeojson(url) {
+    const response = await fetch(url);
+    const wienData = await response.json();
+    const geojson = L.geoJSON(wienData, {
+        style: function(feature){
+            return{color: "#ff0000"};
+        }, 
+        pointToLayer: function(geoJsonPoint, latlng) {
+            return L.marker(latlng, {
+                icon: L.icon({
+                    iconUrl: "icons/robbery.png"
+                })
+            });
+        }
+    });
+    wienGroup.addLayer(geojson);
+    myMap.fitBounds(wienGroup.getBounds());
+}
+
+
+const url = "https://data.wien.gv.at/daten/geo?service=WFS&request=GetFeature&version=1.1.0&srsName=EPSG:4326&outputFormat=json&typeName=ogdwien:SPAZIERPUNKTOGD,ogdwien:SPAZIERLINIEOGD"
+
+addGeojson(url);
+
