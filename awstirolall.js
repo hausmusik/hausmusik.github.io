@@ -1,6 +1,6 @@
 
 let myMap = L.map("mapdiv");
-//let myLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"); // s steht für den Subdomain
+const awsGroup = L.featureGroup().addTo(myMap);
 
 let myLayers = {
     osm : L.tileLayer (
@@ -53,6 +53,7 @@ let myMapControl = L.control.layers({
     "Bmaporthofoto20cm" : myLayers.bmaporthofoto30cm,
 }, {
     "Bmapoverlay" : myLayers.bmapoverlay,
+    "Wetterstationen" : awsGroup,
 }, {
     collapsed : true
 });
@@ -70,3 +71,13 @@ L.control.scale({
     imperial: false,
     }
 ).addTo(myMap);
+
+let geojson = L.geoJSON (stationen).addTo(awsGroup); //Hinzufuegen der Stationen zur Map
+geojson.bindPopup(function(layer) {
+    const props = layer.feature.properties;
+    const popupText = `<h1>${props.name}</h1>
+    <p>Temperatur: ${props.LT} °C</p>`;
+    
+    return popupText;   
+
+});
