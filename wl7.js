@@ -91,7 +91,7 @@ addGeojson(url1);
 
 
 //Sehenswuerdigkeiten
-async function addGeojson(url2) {
+async function addGeojson2(url2) {
     const response2 = await fetch(url2);
     const sehenswuerdigkeitenData = await response2.json();
     const geojson2 = L.geoJSON(sehenswuerdigkeitenData, {
@@ -109,6 +109,6 @@ async function addGeojson(url2) {
     sehenswuerdigkeiten.addLayer(geojson2);
     myMap.fitBounds(sehenswuerdigkeiten.getBounds());
 };
-addGeojson(url2);
+addGeojson2(url2);
 
 
