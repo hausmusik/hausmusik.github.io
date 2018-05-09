@@ -12,6 +12,7 @@ myMap.addLayer(clusterBike);
 var clusterSehenswuerdigkeiten = L.markerClusterGroup();
 myMap.addLayer(clusterSehenswuerdigkeiten);
 
+
 let myLayers = {
     osm : L.tileLayer (
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -90,16 +91,19 @@ async function addGeojson(url1) {
             });
         }
     });
-    geojson.bindPopup(function(layer){
+    /*geojson.bindPopup(function(layer){
         const props = layer.feature.properties;
         const popupText= `<h1>${props.STATION}</h1>`;
         return popupText;
-    });
+    });*/
     clusterBike.addLayer(geojson);
     //citybike.addLayer(geojson);
     myMap.fitBounds(clusterBike.getBounds());
     
-    
+    myMap.addControl( new L.Control.Search({
+        layer: clusterBike,
+        propertyName: "STATION",
+    }) );
 
 };
 addGeojson(url1);
