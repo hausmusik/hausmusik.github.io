@@ -14,49 +14,49 @@ myMap.addLayer(clusterSehenswuerdigkeiten);
 
 
 let myLayers = {
-    osm : L.tileLayer (
+    osm: L.tileLayer(
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-            subdomains : ["a","b","c"], 
-            attribution : "Datenquelle: <a href='https://www.openstreetmap.org'> openstreetmap.at </a>"
+            subdomains: ["a", "b", "c"],
+            attribution: "Datenquelle: <a href='https://www.openstreetmap.org'> openstreetmap.at </a>"
         }
     ),
-    geolandbasemap : L.tileLayer (
+    geolandbasemap: L.tileLayer(
         "https://{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png", {
-            subdomains : ["maps","maps1","maps2","maps3","maps4"],
-            attribution : "Datenquelle: <a href='https://www.basemap.at'> basemap.at </a>"
+            subdomains: ["maps", "maps1", "maps2", "maps3", "maps4"],
+            attribution: "Datenquelle: <a href='https://www.basemap.at'> basemap.at </a>"
         }
     ),
-    bmapoverlay :  L.tileLayer (
+    bmapoverlay: L.tileLayer(
         "https://{s}.wien.gv.at/basemap/bmapoverlay/normal/google3857/{z}/{y}/{x}.png", {
-            subdomains : ["maps","maps1","maps2","maps3","maps4"],
-            attribution : "Datenquelle: <a href='https://www.basemap.at'> basemap.at </a>"
+            subdomains: ["maps", "maps1", "maps2", "maps3", "maps4"],
+            attribution: "Datenquelle: <a href='https://www.basemap.at'> basemap.at </a>"
         }
     ),
-    bmaporthofoto30cm : L.tileLayer 
-    ("https://{s}.wien.gv.at/basemap/bmaporthofoto30cm/normal/google3857/{z}/{y}/{x}.jpeg", {
-        subdomains : ["maps","maps1","maps2","maps3","maps4"],
-        attribution : "Datenquelle: <a href='https://www.basemap.at'> basemap.at </a>"
+    bmaporthofoto30cm: L.tileLayer
+        ("https://{s}.wien.gv.at/basemap/bmaporthofoto30cm/normal/google3857/{z}/{y}/{x}.jpeg", {
+            subdomains: ["maps", "maps1", "maps2", "maps3", "maps4"],
+            attribution: "Datenquelle: <a href='https://www.basemap.at'> basemap.at </a>"
         }
-    ),
+        ),
 };
 
 
 
 
 myMap.addLayer(myLayers.osm);
-let myMapControl = L.control.layers({ 
-    "Openstreetmap" : myLayers.osm,
-    "Geolandbasemap" : myLayers.geolandbasemap,
-    "Bmaporthofoto30cm" : myLayers.bmaporthofoto30cm,
+let myMapControl = L.control.layers({
+    "Openstreetmap": myLayers.osm,
+    "Geolandbasemap": myLayers.geolandbasemap,
+    "Bmaporthofoto30cm": myLayers.bmaporthofoto30cm,
 }, {
-    "Bmapoverlay" : myLayers.bmapoverlay,
-    //"Citybike Stationen" : citybike, //Hinzufuegen zum Overlay
-    //"Sehenwuerdigkeiten" : sehenswuerdigkeiten,
-    "Citybike Cluster" : clusterBike,
-    "Sehenswuerdigkeiten Cluster" : clusterSehenswuerdigkeiten,
-}, {
-    collapsed : true
-});
+        "Bmapoverlay": myLayers.bmapoverlay,
+        //"Citybike Stationen" : citybike, //Hinzufuegen zum Overlay
+        //"Sehenwuerdigkeiten" : sehenswuerdigkeiten,
+        "Citybike Cluster": clusterBike,
+        "Sehenswuerdigkeiten Cluster": clusterSehenswuerdigkeiten,
+    }, {
+        collapsed: true
+    });
 
 myMap.addControl(myMapControl);
 
@@ -65,7 +65,7 @@ L.control.scale({
     maxWidth: 200,
     metric: true,
     imperial: false,
-    }
+}
 ).addTo(myMap);
 
 const myIcon = L.icon({
@@ -80,10 +80,10 @@ async function addGeojson(url1) {
     const response = await fetch(url1);
     const citybikeData = await response.json();
     const geojson = L.geoJSON(citybikeData, {
-        style: function(feature){
-            return{color: "#ff0000"};
-        }, 
-        pointToLayer: function(geoJsonPoint, latlng) {
+        style: function (feature) {
+            return { color: "#ff0000" };
+        },
+        pointToLayer: function (geoJsonPoint, latlng) {
             return L.marker(latlng, {
                 icon: L.icon({
                     iconUrl: "icons/cycling.png"
@@ -99,11 +99,11 @@ async function addGeojson(url1) {
     clusterBike.addLayer(geojson);
     //citybike.addLayer(geojson);
     myMap.fitBounds(clusterBike.getBounds());
-    
-    myMap.addControl( new L.Control.Search({
+
+    myMap.addControl(new L.Control.Search({
         layer: clusterBike,
         propertyName: "STATION",
-    }) );
+    }));
 
 };
 addGeojson(url1);
@@ -115,10 +115,10 @@ async function addGeojson2(url2) {
     const response2 = await fetch(url2);
     const sehenswuerdigkeitenData = await response2.json();
     const geojson2 = L.geoJSON(sehenswuerdigkeitenData, {
-        style: function(feature){
-            return{color: "#ff0000"};
-        }, 
-        pointToLayer: function(geoJsonPoint, latlng) {
+        style: function (feature) {
+            return { color: "#ff0000" };
+        },
+        pointToLayer: function (geoJsonPoint, latlng) {
             return L.marker(latlng, {
                 icon: L.icon({
                     iconUrl: "icons/sehenswuerdigkeit.png"
