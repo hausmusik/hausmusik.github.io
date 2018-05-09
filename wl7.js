@@ -90,15 +90,21 @@ async function addGeojson(url1) {
             });
         }
     });
+    geojson.bindPopup(function(layer){
+        const props = layer.feature.properties;
+        const popupText= `<h1>${props.STATION}</h1>`;
+        return popupText;
+    });
     clusterBike.addLayer(geojson);
-    //myMap.fitBounds(citybike.getBounds());
-    var hash = new L.Hash(myMap);
+    //citybike.addLayer(geojson);
+    myMap.fitBounds(clusterBike.getBounds());
+    
     
 
 };
 addGeojson(url1);
-
-
+//leaflet - Hash
+var hash = new L.Hash(myMap);
 
 //Sehenswuerdigkeiten
 async function addGeojson2(url2) {
@@ -117,6 +123,7 @@ async function addGeojson2(url2) {
         }
     });
     clusterSehenswuerdigkeiten.addLayer(geojson2);
+    //sehenswuerdigkeiten.addLayer(geojson2);
     //myMap.fitBounds(sehenswuerdigkeiten.getBounds());
 };
 addGeojson2(url2);
