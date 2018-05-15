@@ -1,7 +1,6 @@
-
-//https://mapicons.mapsmarker.com icon raussuchen
 let myMap = L.map("map");
-let bikeGroup = L.featureGroup().addTo(myMap)
+let bikeGroup = L.featureGroup().addTo(myMap);
+let bikeLine = L.featureGroup().addTo(myMap);
 let myLayers = {
     osm : L.tileLayer (
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -21,24 +20,18 @@ let myLayers = {
             attribution : "Datenquelle: <a href='https://www.basemap.at'> basemap.at </a>"
         }
     ),
-    bmapgrau : L.tileLayer (
-        "https://{s}.wien.gv.at/basemap/bmapgrau/normal/google3857/{z}/{y}/{x}.png", {
-            subdomains : ["maps","maps1","maps2","maps3","maps4"],
-            attribution : "Datenquelle: <a href='https://www.basemap.at'> basemap.at </a>"
-        }
-    ),
-    bmaphidpi : L.tileLayer (
-        "https://{s}.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpeg", {
-            subdomains : ["maps","maps1","maps2","maps3","maps4"],
-            attribution : "Datenquelle: <a href='https://www.basemap.at'> basemap.at </a>"
-        }
-    ),
-    bmaporthofoto30cm : L.tileLayer 
-    ("https://{s}.wien.gv.at/basemap/bmaporthofoto30cm/normal/google3857/{z}/{y}/{x}.jpeg", {
-        subdomains : ["maps","maps1","maps2","maps3","maps4"],
-        attribution : "Datenquelle: <a href='https://www.basemap.at'> basemap.at </a>"
-        }
-    ),
+    Summer : L.tileLayer("http://wmts.kartetirol.at/wmts/gdi_base_summer/GoogleMapsCompatible/{z}/{x}/{y}.jpeg80", {
+		attribution : "Datenquelle: <a href='https://www.kartetirol.at'>kartetirol.at</a>",
+	}
+), 
+	Winter : L.tileLayer("http://wmts.kartetirol.at/wmts/gdi_base_winter/GoogleMapsCompatible/{z}/{x}/{y}.jpeg80", {
+		attribution : "Datenquelle: <a href='https://www.kartetirol.at'>kartetirol.at</a>",
+	}
+), 
+	Ortho : L.tileLayer("http://wmts.kartetirol.at/wmts/gdi_ortho/GoogleMapsCompatible/{z}/{x}/{y}.jpeg80", {
+		attribution : "Datenquelle: <a href='https://www.kartetirol.at'>kartetirol.at</a>",
+	}
+), 
 };
 
 
@@ -48,12 +41,14 @@ myMap.addLayer(myLayers.geolandbasemap);
 let myMapControl = L.control.layers({ 
     "Openstreetmap" : myLayers.osm,
     "Geolandbasemap" : myLayers.geolandbasemap,
-    "Bmapgrau" : myLayers.bmapgrau,
-    "Bmaphidpi" : myLayers.bmaphidpi,
-    "Bmaporthofoto20cm" : myLayers.bmaporthofoto30cm,
+    "Sommerkarte": myLayers.Summer,
+    "Winterkarte": myLayers.Winter,
+    "Orthokarte": myLayers.Ortho,
+
 }, {
     "Bmapoverlay" : myLayers.bmapoverlay,
     "Stationen" : bikeGroup, //Hinzufuegen zum Overlay
+    "Route": bikeLine,
 }, {
     collapsed : false
 });
@@ -97,13 +92,13 @@ myMap.fitBounds(bikeGroup.getBounds());
 
 
 
-let geojson = L.geoJSON(toGeoJSON).addTo(bikeGroup);
-/*geojson.bindPopup(function(layer) {
-    const props = layer.feature.properties;
-    const popupText = `<h1>${props.name}</h1>
-    <p>Temperatur: ${props.LT} °C </p>`;
-    return popupText;*/
-
+let geojson = L.geoJSON(toGeoJSON).addTo(bikeLine);
+geojson.bindPopup(function(layer) {
+    //console.log("Layer for Popup:", layer.feature.geometry); 
+    const props = layer.feature.geometry;
+    const line = `<p>${props.coordinates}</p>`;
+    return line // popupText;
+});
 // eine neue Leaflet Karte definieren
 
 // Grundkartenlayer mit OSM, basemap.at, Elektronische Karte Tirol (Sommer, Winter, Orthophoto jeweils mit Beschriftung) über L.featureGroup([]) definieren
