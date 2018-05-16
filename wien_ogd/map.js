@@ -51,8 +51,8 @@ let kartenAuswahl = L.control.layers({
     "basemap.at grau": grundkartenLayer.bmapgrau,
     "basemap.at Orthofoto": grundkartenLayer.bmaporthofoto30cm,
 }, {
-    "GeoJSON Layer": geojsonGruppe,
-});
+        "Marker": geojsonGruppe,
+    });
 karte.addControl(kartenAuswahl);
 
 // Grundkarte "grau" laden
@@ -70,13 +70,31 @@ async function ladeGeojsonLayer(url) {
     const response_json = await response.json();
 
     // GeoJSON Geometrien hinzufügen und auf Ausschnitt zoomen
-    const geojsonObjekt = L.geoJSON(response_json);
+    const geojsonObjekt = L.geoJSON(response_json, {
+        onEachFeature: function (feature, layer) {
+            //console.log(feature.properties)
+            let popup = "<h3>Attribute</h3>"
+            for (attribut in feature.properties) {
+                let wert = feature.properties[attribut];
+                if (wert && wert.toString().startsWith("http:")) {
+                    popup += `${attribut}: <a href="${wert}">Weblink</a><br/>`;
+                } else {
+                    //console.log(attribut, wert)
+                    popup += `${attribut}: ${wert}<br/>`;
+                }
+            }
+            //console.log(popup)
+            layer.bindPopup(popup, {
+                maxWidth: 600,
+            });
+        }
+    });
     geojsonGruppe.addLayer(geojsonObjekt);
     karte.fitBounds(geojsonGruppe.getBounds());
 }
 //Alphabetische Ordnung
-wienDatensaetze.sort(function(a,b){
-    if(a.titel < b.titel) {
+wienDatensaetze.sort(function (a, b) {
+    if (a.titel < b.titel) {
         return -1;
     } else if (a.titel > b.titel) {
         return 1;
@@ -93,8 +111,10 @@ for (datensatz of wienDatensaetze) {
     layerAuswahl.innerHTML += `<option value="${datensatz.json}">${datensatz.titel}</option>`
 };
 
-layerAuswahl.onchange = function(evt){
+layerAuswahl.onchange = function (evt) {
     geojsonGruppe.clearLayers();
     //console.log(evt.target.value);
     ladeGeojsonLayer(evt.target.value);
-}
+};
+
+
