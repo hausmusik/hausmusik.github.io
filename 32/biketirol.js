@@ -1,4 +1,6 @@
-let myMap = L.map("map");
+let myMap = L.map("map", {
+    fullscreenControl: true
+});
 let bikeGroup = L.featureGroup().addTo(myMap);
 let bikeLine = L.featureGroup().addTo(myMap);
 let myLayers = {
@@ -47,7 +49,7 @@ let myMapControl = L.control.layers({
 
 }, {
     "Bmapoverlay" : myLayers.bmapoverlay,
-    "Stationen" : bikeGroup, //Hinzufuegen zum Overlay
+    "Stationen" : bikeGroup,
     "Route": bikeLine,
 }, {
     collapsed : false
@@ -67,10 +69,14 @@ const imst = [47.224,10.749];
 const ehrwald = [47.398, 10.920]
 
 const iconStart = L.icon({
-    iconUrl: "data/startfinish.png"
+    iconUrl: "data/startfinish.png",
+    iconAnchor : [16,37],
+    popupAnchor : [0,-37],
 });
 const iconFinish = L.icon({
-    iconUrl: "data/finish.png"
+    iconUrl: "data/finish.png",
+    iconAnchor : [16,37],
+    popupAnchor : [0,-37],
 });
 
 const markerOptions1 = {
@@ -88,17 +94,27 @@ const markerOptions2 = {
 L.marker(imst, markerOptions1).addTo(bikeGroup).bindPopup("<p><a href='https://de.wikipedia.org/wiki/Imst'><strong>Imst</strong></a></p><img style = 'width:200px' src='https://www.stern-imst.at/fileadmin/template/images/hotel-imst-content/Home-Hotel-Imst/Winterwandern-Tirol-Imst-Blick-02.jpg' alt='Patscherkofel' />");
 L.marker(ehrwald, markerOptions2).addTo(bikeGroup).bindPopup("<p><a href='https://de.wikipedia.org/wiki/Ehrwald'><strong>Ehrwald</strong></a></p><img style = 'width:200px' src='https://www.zugspitzarena.com/website/var/tmp/image-thumbnails/120000/120661/thumb__lightbox-image/ehrwald-kirchplatz-zugspitze.jpeg' alt='Patscherkofel' />");
 
-myMap.fitBounds(bikeGroup.getBounds());
 
 
 
-let geojson = L.geoJSON(toGeoJSON).addTo(bikeLine);
+let gpxTrack = new L.GPX("data/etappe32.gpx", {
+    async: true,
+}).addTo(bikeLine);
+gpxTrack.on("loaded", function(evt) {
+    myMap.fitBounds(evt.target.getBounds());
+});
+
+
+
+//myMap.fitBounds(bikeGroup.getBounds());
+
+/*let geojson = L.geoJSON(toGeoJSON).addTo(bikeLine);
 geojson.bindPopup(function(layer) {
     //console.log("Layer for Popup:", layer.feature.geometry); 
     const props = layer.feature.geometry;
     const line = `<p>${props.coordinates}</p>`;
     return line // popupText;
-});
+});*/
 // eine neue Leaflet Karte definieren
 
 // Grundkartenlayer mit OSM, basemap.at, Elektronische Karte Tirol (Sommer, Winter, Orthophoto jeweils mit Beschriftung) über L.featureGroup([]) definieren
