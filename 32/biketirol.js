@@ -96,11 +96,16 @@ L.marker(ehrwald, markerOptions2).addTo(bikeGroup).bindPopup("<p><a href='https:
 
 
 
-
+//Hilfe fuer leaflet.gpx: https://github.com/mpetazzoni/leaflet-gpx
 let gpxTrack = new L.GPX("data/etappe32.gpx", {
     async: true,
 }).addTo(bikeLine);
 gpxTrack.on("loaded", function(evt) {
+    //console.log(evt.target.get_distance().toFixed(0));
+    //console.log(evt.target.get_elevation_min());
+    let laenge = evt.target.get_distance().toFixed(0);
+    document.getElementById("laenge").innerHTML = laenge;
+
     myMap.fitBounds(evt.target.getBounds());
 });
 
