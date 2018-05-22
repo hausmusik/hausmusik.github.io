@@ -69,12 +69,12 @@ const imst = [47.224,10.749];
 const ehrwald = [47.398, 10.920]
 
 const iconStart = L.icon({
-    iconUrl: "data/startfinish.png",
+    iconUrl: "images/startfinish.png",
     iconAnchor : [16,37],
     popupAnchor : [0,-37],
 });
 const iconFinish = L.icon({
-    iconUrl: "data/finish.png",
+    iconUrl: "images/finish.png",
     iconAnchor : [16,37],
     popupAnchor : [0,-37],
 });
@@ -105,6 +105,14 @@ gpxTrack.on("loaded", function(evt) {
     //console.log(evt.target.get_elevation_min());
     let laenge = evt.target.get_distance().toFixed(0);
     document.getElementById("laenge").innerHTML = laenge;
+    let tiefsterP = evt.target.get_elevation_min().toFixed(0);
+    document.getElementById("tiefsterP").innerHTML = tiefsterP;
+    let hoechsterP = evt.target.get_elevation_max().toFixed(0);
+    document.getElementById("hoechsterP").innerHTML = hoechsterP;
+    let aufstieg = evt.target.get_elevation_gain().toFixed(0)
+    document.getElementById("aufstieg").innerHTML = aufstieg;
+    let abstieg = evt.target.get_elevation_loss().toFixed(0)
+    document.getElementById("abstieg").innerHTML = abstieg;
 
     myMap.fitBounds(evt.target.getBounds());
 });
