@@ -3,7 +3,6 @@ let karte = L.map("divKarte", {
     fullscreenControl: true,
 });
 
-
 // Gruppe für GeoJSON Layer definieren
 let geojsonGruppe = L.featureGroup().addTo(karte);
 

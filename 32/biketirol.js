@@ -3,57 +3,59 @@ let myMap = L.map("map", {
 });
 let bikeGroup = L.featureGroup().addTo(myMap);
 let bikeLine = L.featureGroup().addTo(myMap);
+let overlaySteigung = L.featureGroup().addTo(myMap);
 let myLayers = {
-    osm : L.tileLayer (
+    osm: L.tileLayer(
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-            subdomains : ["a","b","c"], 
-            attribution : "Datenquelle: <a href='https://www.openstreetmap.org'> openstreetmap.at </a>"
+            subdomains: ["a", "b", "c"],
+            attribution: "Datenquelle: <a href='https://www.openstreetmap.org'> openstreetmap.at </a>"
         }
     ),
-    geolandbasemap : L.tileLayer (
+    geolandbasemap: L.tileLayer(
         "https://{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png", {
-            subdomains : ["maps","maps1","maps2","maps3","maps4"],
-            attribution : "Datenquelle: <a href='https://www.basemap.at'> basemap.at </a>"
+            subdomains: ["maps", "maps1", "maps2", "maps3", "maps4"],
+            attribution: "Datenquelle: <a href='https://www.basemap.at'> basemap.at </a>"
         }
     ),
-    bmapoverlay :  L.tileLayer (
+    bmapoverlay: L.tileLayer(
         "https://{s}.wien.gv.at/basemap/bmapoverlay/normal/google3857/{z}/{y}/{x}.png", {
-            subdomains : ["maps","maps1","maps2","maps3","maps4"],
-            attribution : "Datenquelle: <a href='https://www.basemap.at'> basemap.at </a>"
+            subdomains: ["maps", "maps1", "maps2", "maps3", "maps4"],
+            attribution: "Datenquelle: <a href='https://www.basemap.at'> basemap.at </a>"
         }
     ),
-    Summer : L.tileLayer("http://wmts.kartetirol.at/wmts/gdi_base_summer/GoogleMapsCompatible/{z}/{x}/{y}.jpeg80", {
-		attribution : "Datenquelle: <a href='https://www.kartetirol.at'>kartetirol.at</a>",
-	}
-), 
-	Winter : L.tileLayer("http://wmts.kartetirol.at/wmts/gdi_base_winter/GoogleMapsCompatible/{z}/{x}/{y}.jpeg80", {
-		attribution : "Datenquelle: <a href='https://www.kartetirol.at'>kartetirol.at</a>",
-	}
-), 
-	Ortho : L.tileLayer("http://wmts.kartetirol.at/wmts/gdi_ortho/GoogleMapsCompatible/{z}/{x}/{y}.jpeg80", {
-		attribution : "Datenquelle: <a href='https://www.kartetirol.at'>kartetirol.at</a>",
-	}
-), 
+    Summer: L.tileLayer("http://wmts.kartetirol.at/wmts/gdi_base_summer/GoogleMapsCompatible/{z}/{x}/{y}.jpeg80", {
+        attribution: "Datenquelle: <a href='https://www.kartetirol.at'>kartetirol.at</a>",
+    }
+    ),
+    Winter: L.tileLayer("http://wmts.kartetirol.at/wmts/gdi_base_winter/GoogleMapsCompatible/{z}/{x}/{y}.jpeg80", {
+        attribution: "Datenquelle: <a href='https://www.kartetirol.at'>kartetirol.at</a>",
+    }
+    ),
+    Ortho: L.tileLayer("http://wmts.kartetirol.at/wmts/gdi_ortho/GoogleMapsCompatible/{z}/{x}/{y}.jpeg80", {
+        attribution: "Datenquelle: <a href='https://www.kartetirol.at'>kartetirol.at</a>",
+    }
+    ),
 };
 
 
 
 
 myMap.addLayer(myLayers.geolandbasemap);
-let myMapControl = L.control.layers({ 
-    "Openstreetmap" : myLayers.osm,
-    "Geolandbasemap" : myLayers.geolandbasemap,
+let myMapControl = L.control.layers({
+    "Openstreetmap": myLayers.osm,
+    "Geolandbasemap": myLayers.geolandbasemap,
     "Sommerkarte": myLayers.Summer,
     "Winterkarte": myLayers.Winter,
     "Orthokarte": myLayers.Ortho,
 
 }, {
-    "Bmapoverlay" : myLayers.bmapoverlay,
-    "Stationen" : bikeGroup,
-    "Route": bikeLine,
-}, {
-    collapsed : false
-});
+        "Bmapoverlay": myLayers.bmapoverlay,
+        "Stationen": bikeGroup,
+        "Route": bikeLine,
+        "Steigung": overlaySteigung,
+    }, {
+        collapsed: false
+    });
 
 myMap.addControl(myMapControl);
 
@@ -62,21 +64,21 @@ L.control.scale({
     maxWidth: 200,
     metric: true,
     imperial: false,
-    }
+}
 ).addTo(myMap);
 
-const imst = [47.224,10.749];
+const imst = [47.224, 10.749];
 const ehrwald = [47.398, 10.920]
 
 const iconStart = L.icon({
     iconUrl: "images/startfinish.png",
-    iconAnchor : [16,37],
-    popupAnchor : [0,-37],
+    iconAnchor: [16, 37],
+    popupAnchor: [0, -37],
 });
 const iconFinish = L.icon({
     iconUrl: "images/finish.png",
-    iconAnchor : [16,37],
-    popupAnchor : [0,-37],
+    iconAnchor: [16, 37],
+    popupAnchor: [0, -37],
 });
 
 const markerOptions1 = {
@@ -99,8 +101,8 @@ L.marker(ehrwald, markerOptions2).addTo(bikeGroup).bindPopup("<p><a href='https:
 //Hilfe fuer leaflet.gpx: https://github.com/mpetazzoni/leaflet-gpx
 let gpxTrack = new L.GPX("data/etappe32.gpx", {
     async: true,
-}).addTo(bikeLine);
-gpxTrack.on("loaded", function(evt) {
+}); //.addTo(myMap);
+gpxTrack.on("loaded", function (evt) {
     //console.log(evt.target.get_distance().toFixed(0));
     //console.log(evt.target.get_elevation_min());
     let laenge = evt.target.get_distance().toFixed(0);
@@ -117,6 +119,32 @@ gpxTrack.on("loaded", function(evt) {
     myMap.fitBounds(evt.target.getBounds());
 });
 
+//Elevation Control
+var hoehenProfilKontrolle = L.control.elevation({
+    position: "topleft",
+    theme: "steelblue-theme",
+    collapsed: true,
+}).addTo(myMap)
+
+
+//Elevation Zeichnen
+let hoehenProfil = new L.GPX("data/etappe32.gpx", {
+    async: true,
+});
+hoehenProfil.on('loaded', function (evt) {
+    //map.fitBounds(evt.target.getBounds());
+});
+hoehenProfil.on("addline", function (evt) {
+    hoehenProfilKontrolle.addData(evt.line);
+    console.log(evt.line);
+    console.log(evt.line.getLatLngs());
+    console.log(evt.line.getLatLngs()[0]); 
+    console.log(evt.line.getLatLngs()[0].meta); 
+    console.log(evt.line.getLatLngs()[0].lat);    
+    console.log(evt.line.getLatLngs()[0].lng);
+    console.log(evt.line.getLatLngs()[0].meta.ele);        
+});
+hoehenProfil.addTo(bikeLine);
 
 
 //myMap.fitBounds(bikeGroup.getBounds());
@@ -128,18 +156,4 @@ geojson.bindPopup(function(layer) {
     const line = `<p>${props.coordinates}</p>`;
     return line // popupText;
 });*/
-// eine neue Leaflet Karte definieren
 
-// Grundkartenlayer mit OSM, basemap.at, Elektronische Karte Tirol (Sommer, Winter, Orthophoto jeweils mit Beschriftung) über L.featureGroup([]) definieren
-// WMTS URLs siehe https://www.data.gv.at/katalog/dataset/land-tirol_elektronischekartetirol
-
-// Maßstab metrisch ohne inch
-
-// Start- und Endpunkte der Route als Marker mit Popup, Namen, Wikipedia Link und passenden Icons für Start/Ziel von https://mapicons.mapsmarker.com/
-
-// GeoJSON Track als Linie in der Karte einzeichnen und auf Ausschnitt zoomen
-// Einbauen nicht über async, sondern über ein L.geoJSON() mit einem Javascript Objekt (wie beim ersten Stadtspaziergang Wien Beispiel)
-
-// Baselayer control für OSM, basemap.at, Elektronische Karte Tirol hinzufügen
-
-// Overlay controls zum unabhängigem Ein-/Ausschalten der Route und Marker hinzufügen*/
