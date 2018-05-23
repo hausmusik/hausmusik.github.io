@@ -136,13 +136,61 @@ hoehenProfil.on('loaded', function (evt) {
 });
 hoehenProfil.on("addline", function (evt) {
     hoehenProfilKontrolle.addData(evt.line);
-    console.log(evt.line);
+    /*console.log(evt.line);
     console.log(evt.line.getLatLngs());
     console.log(evt.line.getLatLngs()[0]); 
     console.log(evt.line.getLatLngs()[0].meta); 
     console.log(evt.line.getLatLngs()[0].lat);    
     console.log(evt.line.getLatLngs()[0].lng);
-    console.log(evt.line.getLatLngs()[0].meta.ele);        
+    console.log(evt.line.getLatLngs()[0].meta.ele);*/
+
+    //alle Segmente der Steigungslinie hinzufügen
+    let gpxLinie = evt.line.getLatLngs();
+    for (let i = 1; i < gpxLinie.length; i++) {
+        let p1 = gpxLinie[i - 1];
+        let p2 = gpxLinie[i];
+
+        //Entfernung zwischen Punkten Berechnen
+        let dist = myMap.distance(
+            [p1.lat, p1.lng],
+            [p2.lat, p2.lng]
+        );
+
+        //Hoehenunterschied berechnen
+        let delta = p2.meta.ele - p1.meta.ele;
+
+        //Steigung in %
+        /*let proz = 0;
+        if (dist > 0) {
+            let proz = (delta / dist * 100.0).toFixed(1);
+        };*/
+
+        //Andere Schreibweise: Bedingung ? ausdruck1 : Ausdruck2
+        let proz = (dist > 0) ? (delta / dist * 100.0).toFixed(1) : 0;
+
+        //console.log(p1.lat, p1.lng, p2.lat, p2.lng, dist, delta, proz);
+
+        //Zuteilung der Farbe URL: http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3
+        let farbe = 
+            (proz > 10)  ? "#cb181d" :
+            (proz > 6)   ? "#fb6a4a" : 
+            (proz > 2)   ? "#fcae91" : 
+            (proz > 0)   ? "#fee5d9" : 
+            (proz > -2)  ? "#edf8e9" :
+            (proz > -6)  ? "#bae4b3" : 
+            (proz > -10) ? "#74c476" :  
+                           "#238b45";
+
+        let segment = L.polyline(
+            [
+                [p1.lat, p1.lng],
+                [p2.lat, p2.lng],
+            ], {
+                color: farbe,
+                weight: 10,
+            }
+        ).addTo(overlaySteigung);
+    }
 });
 hoehenProfil.addTo(bikeLine);
 
